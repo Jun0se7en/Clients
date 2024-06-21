@@ -10,23 +10,28 @@ from multiprocessing import Pipe
 from src.templates.threadwithstop import ThreadWithStop
 import struct
 import pickle
+from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsColorizeEffect
+from PyQt5.QtGui import QFontDatabase, QPixmap, QImage
+from PyQt5.QtCore import QThread, QEvent, pyqtSignal
+
+import qdarktheme
+
+import folium
+from ui_interface import *
 
 
-class threadClient(ThreadWithStop):
+class threadClient(QThread):
 
     # ================================ INIT ===============================================
-    def __init__(self, serverip, port, debugger):
+    def __init__(self, ip_address, port, ImageUpdateSlot, debugger):
         super(threadClient, self).__init__()
-        self.serverip = serverip
-        self.port = port
         try:
             os.mkdir(f"./captures{self.port}/")
         except:
             pass
         # Kết nối đến server
-        self.server_address = (self.serverip, self.port)  # Địa chỉ và cổng của server
-        self.client_socket = socket.socket()
-        self.client_socket.connect(self.server_address)
+        self.ip_address = ip_address
+        self.port = port
         self.payload_size = struct.calcsize("Q")
 
         # Nhận dữ liệu từ server
@@ -35,18 +40,23 @@ class threadClient(ThreadWithStop):
         self.count = 0
         self.frame_count = 0
         self.img_array = list()
+        self.ImageUpdate = pyqtSignal(QImage)
+        self.ImageUpdate.connect(ImageUpdateSlot)
         self.debugger = debugger
 
-    # =============================== STOP ================================================
+    # =============================== STOP ==============================        print('Socket Close')
     def stop(self):
         self.client_socket.close()
-        # cv2.destroyAllWindows()
-        super(threadClient, self).stop()
+        self._running = False
+        self.terminate()
 
 
     # ================================ RUN ================================================
     def run(self):
         """This function will run while the running flag is True. It captures the image from camera and make the required modifies and then it send the data to process gateway."""
+        self.client_socket = socket.socket()
+        print(f'Socket Created!!!')
+        self.client_socket.connect((self.ip_address, self.port))
         while self._running:
             chunk = self.client_socket.recv(4*1024)
             if not chunk:
@@ -66,26 +76,40 @@ class threadClient(ThreadWithStop):
             img = np.frombuffer(image_data, dtype=np.uint8)
             image = cv2.imdecode(img, cv2.IMREAD_COLOR)
             # print(image)
-            image = cv2.resize(image,(image.shape[1]*2, image.shape[0]*2))
-            cv2.imshow(f'{self.port}', image)
+            image = cv2.resize(image,(320, 240))
+            
+            ## Show Image
+            # Get the frame height, width and channels.
+            height, width, channels = image.shape
+            # Calculate the number of bytes per line.
+            bytes_per_line = width * channels
+            FlippedImage = cv2.flip(image, 1)
+            qt_rgb_image = QImage(FlippedImage.data, width, height, bytes_per_line, QImage.Format_RGB888)
+            qt_rgb_image_scaled = qt_rgb_image.scaled(320, 240, Qt.KeepAspectRatio)
+            self.ImageUpdate.emit(qt_rgb_image_scaled)
 
             if (self.count % 5 == 0):
                 self.frame_count += 1
                 cv2.imwrite(f"./captures{self.port}/frame{self.frame_count}.jpg", image)
             self.img_array.append(image)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            
+            key = ''
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
                 out = cv2.VideoWriter(f'./captures{self.port}/capture.mp4', cv2.VideoWriter_fourcc('m', 'p', '4', 'v'), 15, (320, 240))
                 for i in self.img_array:
                     out.write(i)
                 out.release()
                 self.stop()
                 break
-            
+            abc_bytes = pickle.dumps(chr(key))
+            message = struct.pack("Q", len(abc_bytes))+abc_bytes
+            self.client_socket.sendall(message)
             self.count += 1
 
     # =============================== START ===============================================
     def start(self):
-        super(threadClient, self).start()
+        self._running = True
+        
 
         

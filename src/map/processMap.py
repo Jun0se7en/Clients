@@ -8,10 +8,10 @@ import numpy as np
 import struct
 import os
 
-from src.client.threads.threadClient import threadClient
+from src.map.threads.threadMap import threadMap
 
 
-class processClient(WorkerProcess):
+class processMap(WorkerProcess):
     """This process handle camera.\n
     Args:
             queueList (dictionar of multiprocessing.queues.Queue): Dictionar of queues where the ID is the type of messages.
@@ -20,12 +20,12 @@ class processClient(WorkerProcess):
     """
 
     # ====================================== INIT ==========================================
-    def __init__(self, serverip, port, ImageUpdateSlot, debugging=False):
+    def __init__(self, serverip, port, WebviewUpdateSlot, debugging=False):
         self.serverip = serverip
         self.port = port
-        self.ImageUpdateSlot = ImageUpdateSlot
+        self.WebviewUpdateSlot = WebviewUpdateSlot
         self.debugging = debugging
-        super(processClient, self).__init__()
+        super(processMap, self).__init__()
 
     # ===================================== STOP ==========================================
     def stop(self):
@@ -33,18 +33,18 @@ class processClient(WorkerProcess):
         for thread in self.threads:
             thread.stop()
             thread.join()
-        super(processClient, self).stop()
+        super(processMap, self).stop()
 
     # ===================================== RUN ==========================================
     def run(self):
         """Apply the initializing methods and start the threads."""
-        super(processClient, self).run()
+        super(processMap, self).run()
 
     # ===================================== INIT TH ======================================
     def _init_threads(self):
         """Create the Camera Publisher thread and add to the list of threads."""
-        ClientTh = threadClient(
-            self.serverip, self.port, self.ImageUpdateSlot, self.debugging
+        MapTh = threadMap(
+            self.serverip, self.port, self.WebviewUpdateSlot, self.debugging
         )
-        self.threads.append(ClientTh)
+        self.threads.append(MapTh)
 
