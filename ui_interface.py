@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfaceHfZTkp.ui'
+## Form generated from reading UI file 'interfaceCWXNdP.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.14.1
 ##
@@ -15,9 +15,9 @@ from PyQt5.QtGui import (QBrush, QColor, QConicalGradient, QCursor, QFont,
     QRadialGradient)
 from PyQt5.QtWidgets import *
 
-from PyQt5.QtWebEngineWidgets import QWebEngineView
-
 from AnalogGaugeWidget import AnalogGaugeWidget
+
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
 class Ui_MainWindow(object):
@@ -46,6 +46,7 @@ class Ui_MainWindow(object):
         self.Header_Frame.setSizePolicy(sizePolicy1)
         self.Header_Frame.setFrameShape(QFrame.StyledPanel)
         self.Header_Frame.setFrameShadow(QFrame.Raised)
+        self.Header_Frame.setLineWidth(0)
         self.Header_Frame_Layout = QHBoxLayout(self.Header_Frame)
         self.Header_Frame_Layout.setSpacing(0)
         self.Header_Frame_Layout.setObjectName(u"Header_Frame_Layout")
@@ -57,12 +58,14 @@ class Ui_MainWindow(object):
         self.Header_Left.setSizePolicy(sizePolicy1)
         self.Header_Left.setFrameShape(QFrame.StyledPanel)
         self.Header_Left.setFrameShadow(QFrame.Raised)
+        self.Header_Left.setLineWidth(0)
         self.Header_Left_Layout = QVBoxLayout(self.Header_Left)
         self.Header_Left_Layout.setSpacing(0)
         self.Header_Left_Layout.setObjectName(u"Header_Left_Layout")
         self.Header_Left_Layout.setContentsMargins(0, 0, 0, 0)
         self.lb_Left_Signal = QLabel(self.Header_Left)
         self.lb_Left_Signal.setObjectName(u"lb_Left_Signal")
+        self.lb_Left_Signal.setLineWidth(0)
         self.lb_Left_Signal.setPixmap(QPixmap(u"images/left_arrow_small.png"))
         self.lb_Left_Signal.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignTop)
 
@@ -80,12 +83,14 @@ class Ui_MainWindow(object):
         self.Header_Title.setSizePolicy(sizePolicy2)
         self.Header_Title.setFrameShape(QFrame.StyledPanel)
         self.Header_Title.setFrameShadow(QFrame.Raised)
+        self.Header_Title.setLineWidth(0)
         self.Header_Title_Layout = QVBoxLayout(self.Header_Title)
         self.Header_Title_Layout.setSpacing(0)
         self.Header_Title_Layout.setObjectName(u"Header_Title_Layout")
         self.Header_Title_Layout.setContentsMargins(0, 0, 0, 0)
         self.lb_Title = QLabel(self.Header_Title)
         self.lb_Title.setObjectName(u"lb_Title")
+        self.lb_Title.setLineWidth(0)
         self.lb_Title.setAlignment(Qt.AlignHCenter|Qt.AlignTop)
 
         self.Header_Title_Layout.addWidget(self.lb_Title)
@@ -99,12 +104,14 @@ class Ui_MainWindow(object):
         self.Header_Right.setSizePolicy(sizePolicy1)
         self.Header_Right.setFrameShape(QFrame.StyledPanel)
         self.Header_Right.setFrameShadow(QFrame.Raised)
+        self.Header_Right.setLineWidth(0)
         self.Header_Right_Layout = QVBoxLayout(self.Header_Right)
         self.Header_Right_Layout.setSpacing(0)
         self.Header_Right_Layout.setObjectName(u"Header_Right_Layout")
         self.Header_Right_Layout.setContentsMargins(0, 0, 0, 0)
         self.lb_Right_Signal = QLabel(self.Header_Right)
         self.lb_Right_Signal.setObjectName(u"lb_Right_Signal")
+        self.lb_Right_Signal.setLineWidth(0)
         self.lb_Right_Signal.setPixmap(QPixmap(u"images/right_arrow_small.png"))
         self.lb_Right_Signal.setAlignment(Qt.AlignRight|Qt.AlignTop|Qt.AlignTrailing)
 
@@ -120,6 +127,7 @@ class Ui_MainWindow(object):
         self.WebviewFrame.setSizePolicy(sizePolicy1)
         self.WebviewFrame.setFrameShape(QFrame.StyledPanel)
         self.WebviewFrame.setFrameShadow(QFrame.Raised)
+        self.WebviewFrame.setLineWidth(0)
         self.Webview_Layout = QVBoxLayout(self.WebviewFrame)
         self.Webview_Layout.setSpacing(0)
         self.Webview_Layout.setObjectName(u"Webview_Layout")
@@ -127,7 +135,9 @@ class Ui_MainWindow(object):
         self.WebViewContainer = QWidget(self.WebviewFrame)
         self.WebViewContainer.setObjectName(u"WebViewContainer")
         self.verticalLayout_2 = QVBoxLayout(self.WebViewContainer)
+        self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.WebView = QWebEngineView(self.WebViewContainer)
         self.WebView.setObjectName(u"WebView")
 
@@ -143,15 +153,20 @@ class Ui_MainWindow(object):
         self.BodyFrame.setSizePolicy(sizePolicy1)
         self.BodyFrame.setFrameShape(QFrame.StyledPanel)
         self.BodyFrame.setFrameShadow(QFrame.Raised)
+        self.BodyFrame.setLineWidth(0)
         self.Body_Left_Frame = QFrame(self.BodyFrame)
         self.Body_Left_Frame.setObjectName(u"Body_Left_Frame")
         self.Body_Left_Frame.setGeometry(QRect(0, 0, 480, 320))
         self.Body_Left_Frame.setFrameShape(QFrame.StyledPanel)
         self.Body_Left_Frame.setFrameShadow(QFrame.Raised)
+        self.Body_Left_Frame.setLineWidth(0)
         self.verticalLayout_3 = QVBoxLayout(self.Body_Left_Frame)
+        self.verticalLayout_3.setSpacing(0)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.lb_Raw_Img = QLabel(self.Body_Left_Frame)
         self.lb_Raw_Img.setObjectName(u"lb_Raw_Img")
+        self.lb_Raw_Img.setLineWidth(0)
         self.lb_Raw_Img.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout_3.addWidget(self.lb_Raw_Img)
@@ -161,6 +176,7 @@ class Ui_MainWindow(object):
         self.Body_Center_Frame.setGeometry(QRect(480, 0, 320, 320))
         self.Body_Center_Frame.setFrameShape(QFrame.StyledPanel)
         self.Body_Center_Frame.setFrameShadow(QFrame.Raised)
+        self.Body_Center_Frame.setLineWidth(0)
         self.gridLayout = QGridLayout(self.Body_Center_Frame)
         self.gridLayout.setSpacing(0)
         self.gridLayout.setObjectName(u"gridLayout")
@@ -175,10 +191,14 @@ class Ui_MainWindow(object):
         self.Body_Right_Frame.setGeometry(QRect(800, 0, 480, 320))
         self.Body_Right_Frame.setFrameShape(QFrame.StyledPanel)
         self.Body_Right_Frame.setFrameShadow(QFrame.Raised)
+        self.Body_Right_Frame.setLineWidth(0)
         self.verticalLayout = QVBoxLayout(self.Body_Right_Frame)
+        self.verticalLayout.setSpacing(0)
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.lb_Output_Img = QLabel(self.Body_Right_Frame)
         self.lb_Output_Img.setObjectName(u"lb_Output_Img")
+        self.lb_Output_Img.setLineWidth(0)
         self.lb_Output_Img.setAlignment(Qt.AlignCenter)
 
         self.verticalLayout.addWidget(self.lb_Output_Img)

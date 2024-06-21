@@ -6,8 +6,6 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QGraphicsColorizeEffect
 from PyQt5.QtGui import QFontDatabase, QPixmap, QImage
 from PyQt5.QtCore import QThread, QEvent, pyqtSignal
 
-import qdarktheme
-
 import folium
 
 import cv2
@@ -25,16 +23,25 @@ import numpy as np
 
 from ui_interface import *
 
+from src.client.threads.threadClient import threadClient
+from src.map.threads.threadMap import threadMap
+
 class MainWindow(QMainWindow):     
-    def __init__(self, parent=None):
+    def __init__(self, Camera, Map, xavierip, xavierport, esp32ip, esp32port, parent=None):
         QMainWindow.__init__(self)
         
+        self.Camera = Camera
+        self.Map = Map
+        self.esp32ip = esp32ip
+        self.esp32port = esp32port
+        self.xavierip = xavierip
+        self.xavierport = xavierport
+
         self.allProcesses = []
 
         ################################################################################################
         # Setup the UI main window
         ################################################################################################
-        qdarktheme.setup_theme()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
@@ -101,17 +108,31 @@ class MainWindow(QMainWindow):
         self.ui.Analog_Gauge_Speed.setBigScaleColor("yellow")
         self.ui.Analog_Gauge_Speed.setFineScaleColor("blue")
 
+        if self.Camera:
+            self.CameraWorker = threadClient(self.xavierip, self.xavierport)
+            self.CameraWorker.start()
+            self.CameraWorker.ImageUpdate.connect(self.ImageUpdateSlot)
+
+        if self.Camera:
+            self.OutputImageWorker = threadClient(self.xavierip, self.xavierport+1)
+            self.OutputImageWorker.start()
+            self.OutputImageWorker.ImageUpdate.connect(self.OutputImageUpdateSlot)
+
+        if self.Map:
+            self.MapWorker = threadMap(self.esp32ip, self.esp32port)
+            self.MapWorker.start()
+            self.MapWorker.MapUpdate.connect(self.WebviewUpdateSlot)
+
         #Register signal for program exit!
         signal.signal(signal.SIGINT, self.signal_handler)
 
     def signal_handler(self, signal, frame):
         print("\nCatching a Keyboard Interruption exception! Shutdown all processes.\n")
-        for proc in self.allProcesses:
-            print("Process stopped", proc)
-            proc.stop()
-            proc.join()
-        # logger.info("Received Ctrl+C, stopping processes...")
-        # Stop all processes:
+        if self.Camera:
+            self.CameraWorker.stop()
+            self.OutputImageWorker.stop()
+        if self.Map:
+            self.MapWorker.stop()
         sys.exit(0)
 
     def ImageUpdateSlot(self, image):
