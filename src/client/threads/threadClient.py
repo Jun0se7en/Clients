@@ -21,13 +21,22 @@ from ui_interface import *
 class threadClient(QThread):
     ImageUpdate = pyqtSignal(QImage)
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, birdview, segment, calibrate):
         super().__init__()
         self.ThreadActive = True
         self.host = host
         self.port = port
-        print(self.host, self.port)
+        self.frame = 0
+        self.count = 0
         self.connect_flag = False 
+        self.birdview = birdview
+        self.calibrate = calibrate
+        self.camera_matrix = np.load('./data/Camera_Matrix.npy')
+        self.dist_coeffs = np.load('./data/Distortion_Matrix.npy')
+        self.width = 640
+        self.height = 480
+        self.new_camera_matrix, self.roi = cv2.getOptimalNewCameraMatrix(self.camera_matrix, self.dist_coeffs, (self.width,self.height), 1, (self.width,self.height))
+        self.segment = segment
         
 
     def run(self):
@@ -37,11 +46,11 @@ class threadClient(QThread):
         # host = "192.168.2.193"
         # port = 12345  # socket server port number
 
-        client_socket = socket.socket()  # instantiate
+        self.client_socket = socket.socket()  # instantiate
         print('Socket created')
         while not self.connect_flag:
             try:
-                client_socket.connect((self.host, self.port))  # connect to the server
+                self.client_socket.connect((self.host, self.port))  # connect to the server
                 self.connect_flag = True
             except:
                 print('Connecting Failed!!! Retrying....')
@@ -52,7 +61,7 @@ class threadClient(QThread):
 
         while self.ThreadActive:
             while len(data) < payload_size:
-                packet = client_socket.recv(4*1024)
+                packet = self.client_socket.recv(4*1024)
                 if not packet: break
                 data+=packet
             packed_msg_size = data[:payload_size]
@@ -60,7 +69,7 @@ class threadClient(QThread):
             msg_size = struct.unpack("Q",packed_msg_size)[0]
             
             while len(data) < msg_size:
-                data += client_socket.recv(4*1024)
+                data += self.client_socket.recv(4*1024)
             frame_data = data[:msg_size]
             data  = data[msg_size:]
             frame = pickle.loads(frame_data)
@@ -69,7 +78,7 @@ class threadClient(QThread):
             img = np.frombuffer(image_data, dtype=np.uint8)
             frame = cv2.imdecode(img, cv2.IMREAD_COLOR)
             key = cv2.waitKey(1) & 0xFF
-            if key  == 27:
+            if key == ord('q'):
                 break
 
             # Get the frame height, width and channels.
@@ -77,9 +86,42 @@ class threadClient(QThread):
             # Calculate the number of bytes per line.
             bytes_per_line = width * channels
             Image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            FlippedImage = cv2.flip(Image, 1)
+            try:
+                os.mkdir(f'../data/{self.port}/')
+            except:
+                pass
+            if self.count % 5 == 0:
+                cv2.imwrite(f'../data/{self.port}/{self.frame}.png', frame)
+                self.frame += 1
+            self.count += 1
+            if not self.segment:
+                if self.calibrate.value:
+                    undistorted_img = cv2.undistort(Image.copy(), self.camera_matrix, self.dist_coeffs, None, self.new_camera_matrix)
+                    # Cắt ảnh để bỏ các phần đen sau khi hiệu chỉnh
+                    x, y, w, h = self.roi
+                    undistorted_img = undistorted_img[y:y+h, x:x+w]
+                    undistorted_img = cv2.resize(undistorted_img, (self.width, self.height))
+                    height, width, channels = undistorted_img.shape
+                    # Calculate the number of bytes per line.
+                    bytes_per_line = width * channels
+                    # print(undistorted_img.shape)
+                    Image = undistorted_img
+                if self.birdview.value:
+                    h, w, c = Image.shape
+                    src = np.float32([
+                        [w*0.2, h*0.2], # top-left
+                        [w-w*0.2, h*0.2], # top-right
+                        [w, h], # bottom-right
+                        [0, h], # bottom-left
+                    ])
+                    dst = np.array([[0, 0], [480, 0], [300, 400], [180, 400]], np.float32)
+                    M = cv2.getPerspectiveTransform(src, dst)
+                    width, height, channels = 480, 360, 3
+                    bytes_per_line = width * channels
+                    Image = cv2.warpPerspective(Image.copy(), M, (480, 360))
+            # FlippedImage = cv2.flip(Image, 1)
             # Convert the image to Qt format.
-            qt_rgb_image = QImage(FlippedImage.data, width, height, bytes_per_line, QImage.Format_RGB888)
+            qt_rgb_image = QImage(Image.data, width, height, bytes_per_line, QImage.Format_RGB888)
             # Scale the image.
             # NOTE: consider removing the flag Qt.KeepAspectRatio as it will crash Python on older Windows machines
             # If this is the case, call instead: qt_rgb_image.scaled(1280, 720) 
@@ -87,10 +129,17 @@ class threadClient(QThread):
             # qt_rgb_image_scaled = qt_rgb_image.scaled(1920, 1080, Qt.KeepAspectRatio)
             # Emit this signal to notify that a new image or frame is available.
             self.ImageUpdate.emit(qt_rgb_image_scaled)
+            
         # When everything done, release the socket
-        client_socket.close()
+        self.client_socket.close()
         # Tells the thread's event loop to exit with return code 0 (success).
         self.terminate()
+
+    def send_key(self, key):
+        abc_bytes = pickle.dumps(chr(key))
+        message = struct.pack("Q", len(abc_bytes))+abc_bytes
+        print(message)
+        self.client_socket.sendall(message)
 
     def stop(self):
         self.ThreadActive = False

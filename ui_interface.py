@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'interfaceCWXNdP.ui'
+## Form generated from reading UI file 'interfaceDsBoir.ui'
 ##
 ## Created by: Qt User Interface Compiler version 5.14.1
 ##
@@ -21,10 +21,14 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 
 
 class Ui_MainWindow(object):
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
     def setupUi(self, MainWindow):
         if MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1280, 720)
+        # MainWindow.resize(1920, 1080)
+        MainWindow.resize(self.width, self.height)
         icon = QIcon()
         icon.addFile(u"images/Logo_UIT.png", QSize(), QIcon.Normal, QIcon.Off)
         MainWindow.setWindowIcon(icon)
@@ -35,10 +39,10 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
         self.centralwidget.setSizePolicy(sizePolicy)
-        self.centralwidget.setMinimumSize(QSize(1280, 720))
+        self.centralwidget.setMinimumSize(QSize(self.width, self.height))
         self.Header_Frame = QFrame(self.centralwidget)
         self.Header_Frame.setObjectName(u"Header_Frame")
-        self.Header_Frame.setGeometry(QRect(0, 0, 1280, 80))
+        self.Header_Frame.setGeometry(QRect(0, 0, self.width, 80))
         sizePolicy1 = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         sizePolicy1.setHorizontalStretch(0)
         sizePolicy1.setVerticalStretch(0)
@@ -122,7 +126,7 @@ class Ui_MainWindow(object):
 
         self.WebviewFrame = QFrame(self.centralwidget)
         self.WebviewFrame.setObjectName(u"WebviewFrame")
-        self.WebviewFrame.setGeometry(QRect(0, 400, 1280, 320))
+        self.WebviewFrame.setGeometry(QRect(0, int(self.width*3 + 80), self.width, int(self.width/3)))
         sizePolicy1.setHeightForWidth(self.WebviewFrame.sizePolicy().hasHeightForWidth())
         self.WebviewFrame.setSizePolicy(sizePolicy1)
         self.WebviewFrame.setFrameShape(QFrame.StyledPanel)
@@ -131,6 +135,7 @@ class Ui_MainWindow(object):
         self.Webview_Layout = QVBoxLayout(self.WebviewFrame)
         self.Webview_Layout.setSpacing(0)
         self.Webview_Layout.setObjectName(u"Webview_Layout")
+        self.Webview_Layout.setGeometry(QRect(0, 0, self.width, int(self.width/3)))
         self.Webview_Layout.setContentsMargins(0, 0, 0, 0)
         self.WebViewContainer = QWidget(self.WebviewFrame)
         self.WebViewContainer.setObjectName(u"WebViewContainer")
@@ -138,8 +143,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.lb_WebView = QLabel(self.WebviewFrame)
+        self.lb_WebView.setObjectName(u"lb_WebView")
+        self.lb_WebView.setLineWidth(0)
+        self.lb_WebView.setAlignment(Qt.AlignCenter)
         self.WebView = QWebEngineView(self.WebViewContainer)
         self.WebView.setObjectName(u"WebView")
+        self.WebView.setGeometry(QRect(0, 0, self.width, int(self.width/3)))
 
         self.verticalLayout_2.addWidget(self.WebView, 0, Qt.AlignLeft|Qt.AlignVCenter)
 
@@ -148,7 +158,7 @@ class Ui_MainWindow(object):
 
         self.BodyFrame = QFrame(self.centralwidget)
         self.BodyFrame.setObjectName(u"BodyFrame")
-        self.BodyFrame.setGeometry(QRect(0, 80, 1280, 320))
+        self.BodyFrame.setGeometry(QRect(0, 80, self.width, int(self.width/3)))
         sizePolicy1.setHeightForWidth(self.BodyFrame.sizePolicy().hasHeightForWidth())
         self.BodyFrame.setSizePolicy(sizePolicy1)
         self.BodyFrame.setFrameShape(QFrame.StyledPanel)
@@ -156,7 +166,7 @@ class Ui_MainWindow(object):
         self.BodyFrame.setLineWidth(0)
         self.Body_Left_Frame = QFrame(self.BodyFrame)
         self.Body_Left_Frame.setObjectName(u"Body_Left_Frame")
-        self.Body_Left_Frame.setGeometry(QRect(0, 0, 480, 320))
+        self.Body_Left_Frame.setGeometry(QRect(0, 0, int(self.width/3), int(self.width/3)))
         self.Body_Left_Frame.setFrameShape(QFrame.StyledPanel)
         self.Body_Left_Frame.setFrameShadow(QFrame.Raised)
         self.Body_Left_Frame.setLineWidth(0)
@@ -173,22 +183,31 @@ class Ui_MainWindow(object):
 
         self.Body_Center_Frame = QFrame(self.BodyFrame)
         self.Body_Center_Frame.setObjectName(u"Body_Center_Frame")
-        self.Body_Center_Frame.setGeometry(QRect(480, 0, 320, 320))
+        self.Body_Center_Frame.setGeometry(QRect(int(self.width/3), 0, int(self.width/3), int(self.width/3)))
         self.Body_Center_Frame.setFrameShape(QFrame.StyledPanel)
         self.Body_Center_Frame.setFrameShadow(QFrame.Raised)
         self.Body_Center_Frame.setLineWidth(0)
-        self.gridLayout = QGridLayout(self.Body_Center_Frame)
-        self.gridLayout.setSpacing(0)
-        self.gridLayout.setObjectName(u"gridLayout")
-        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.Analog_Gauge_Speed = AnalogGaugeWidget(self.Body_Center_Frame)
         self.Analog_Gauge_Speed.setObjectName(u"Analog_Gauge_Speed")
-
-        self.gridLayout.addWidget(self.Analog_Gauge_Speed, 0, 0, 1, 1)
-
+        self.Analog_Gauge_Speed.setGeometry(QRect(0, 0, int(self.width/6), int(self.width/6)))
+        self.Analog_Gauge_Angle = AnalogGaugeWidget(self.Body_Center_Frame)
+        self.Analog_Gauge_Angle.setObjectName(u"Analog_Gauge_Angle")
+        self.Analog_Gauge_Angle.setGeometry(QRect(int(self.width/6), 0, int(self.width/6), int(self.width/6)))
+        self.lb_Speed = QLabel(self.Body_Center_Frame)
+        self.lb_Speed.setObjectName(u"lb_Speed")
+        self.lb_Speed.setGeometry(QRect(0, int(self.width/6), int(self.width/6), 40))
+        font = QFont()
+        font.setPointSize(16)
+        font.setBold(True)
+        font.setWeight(75)
+        self.lb_Speed.setFont(font)
+        self.lb_Angle = QLabel(self.Body_Center_Frame)
+        self.lb_Angle.setObjectName(u"lb_Angle")
+        self.lb_Angle.setGeometry(QRect(int(self.width/6), int(self.width/6), int(self.width/6), 40))
+        self.lb_Angle.setFont(font)
         self.Body_Right_Frame = QFrame(self.BodyFrame)
         self.Body_Right_Frame.setObjectName(u"Body_Right_Frame")
-        self.Body_Right_Frame.setGeometry(QRect(800, 0, 480, 320))
+        self.Body_Right_Frame.setGeometry(QRect(int(self.width*2/3), 0, int(self.width/3), int(self.width/3)))
         self.Body_Right_Frame.setFrameShape(QFrame.StyledPanel)
         self.Body_Right_Frame.setFrameShadow(QFrame.Raised)
         self.Body_Right_Frame.setLineWidth(0)
@@ -216,6 +235,9 @@ class Ui_MainWindow(object):
         self.lb_Title.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p><span style=\" font-size:36pt; font-weight:600; color:#0000ff;\">UIT CAR DASHBOARD</span></p></body></html>", None))
         self.lb_Right_Signal.setText("")
         self.lb_Raw_Img.setText(QCoreApplication.translate("MainWindow", u"Raw_Img", None))
+        self.lb_Speed.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:600; color:#ff5500;\">SPEED</span></p></body></html>", None))
+        self.lb_Angle.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\"><span style=\" font-size:16pt; font-weight:600; color:#55007f;\">ANGLE</span></p></body></html>", None))
         self.lb_Output_Img.setText(QCoreApplication.translate("MainWindow", u"Output_Img", None))
+        self.lb_WebView.setText(QCoreApplication.translate("MainWindow", u"Web View", None))
     # retranslateUi
 
